@@ -1,0 +1,22 @@
+{
+    "model_name": "Random Forest",
+    "target": "Product_Store_Sales_Total",
+    "features": [
+        "Product_Weight",
+        "Product_Sugar_Content",
+        "Product_Allocated_Area",
+        "Product_Type",
+        "Product_MRP",
+        "Store_Id",
+        "Store_Establishment_Year",
+        "Store_Size",
+        "Store_Location_City_Type",
+        "Store_Type"
+    ],
+    "metrics": {
+        "MAE": 115.2639108918751,
+        "RMSE": 285.2186138324128,
+        "R2": 0.9287044415417504,
+        "MAPE": 4.2044817818675835
+    }
+}
