@@ -1,21 +1,20 @@
 
 import os
+from pathlib import Path
+
 import joblib
 import pandas as pd
 import streamlit as st
-from huggingface_hub import hf_hub_download
 
 
 # ============================================================
 # Configuration
 # ============================================================
 
-MODEL_REPO = os.getenv(
-    "MODEL_REPO",
-    "johnsonrajkumar/superkart-sales-model"
-)
-
 MODEL_FILENAME = "superkart_sales_model.pkl"
+
+# Model is bundled with the application for reliable deployment.
+MODEL_PATH = Path(__file__).resolve().parent / "models" / MODEL_FILENAME
 
 
 # ============================================================
@@ -30,21 +29,18 @@ st.set_page_config(
 
 
 # ============================================================
-# Load Model from Hugging Face Model Hub
+# Load Model
 # ============================================================
 
 @st.cache_resource
 def load_model():
 
-    model_path = hf_hub_download(
-        repo_id=MODEL_REPO,
-        filename=MODEL_FILENAME,
-        repo_type="model"
-    )
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError(
+            f"Model file not found at: {MODEL_PATH}"
+        )
 
-    model = joblib.load(model_path)
-
-    return model
+    return joblib.load(MODEL_PATH)
 
 
 # Load trained model
@@ -185,7 +181,6 @@ with st.form("sales_prediction_form"):
 
 if submitted:
 
-    # Create input DataFrame
     input_data = pd.DataFrame([{
         "Product_Weight": product_weight,
         "Product_Sugar_Content": product_sugar_content,
@@ -199,15 +194,12 @@ if submitted:
         "Store_Type": store_type
     }])
 
-    # Generate prediction
     prediction = model.predict(input_data)[0]
 
-    # Display prediction
     st.success(
         f"Predicted Sales: ₹{prediction:,.2f}"
     )
 
-    # Display submitted values
     st.subheader("Input Details")
 
     st.dataframe(
